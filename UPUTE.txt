@@ -1,0 +1,18 @@
+Što je potrebno napraviti:
+1) Napraviti folder OpenFoamOriginalFiles i raspakirati u njemu OpenFoamFiles.rar. U ovom folderu će biti originalna simulacija kojom će se
+uspoređivati ostale simulacije sa NOMADom. NJEGA SE NE BRIŠE
+2) Program će svaki put kad ga NOMAD pokrene stvoriti novi folder OpenFoamFiles i u njega će upisivati nove vrijednosti koje će usporediti sa originalnim i
+onda će ga izbrisati.
+3) Probaj se upoznati sa skriptama koje sam napravio i pokrenuti jednu simulaciju pomoću skripti:
+    - odi u search bar i uđi u cmd. Navigiraj do foldera Pozar
+    - utipkaj python Main.py x y T -> Ubaci neke bzvz brojeve cisto da vidis hoće li se pokrenuti cijela simulacija u OF
+    - Mora se stvorit novi folder OpenFoamFiles, promjenit će se setFieldsDict i controlDict file i system
+    - Onda će se pozvati funkcija startSimulation iz skripte FunctionDefinitions.py
+    - Na kraju će se izbrisati OpenFoamFiles folder. U funkciji startSimulation stavi u files_to_keep=['log.run'] 
+    - U log.run češ vidjet errore koji su se pojavili
+
+4) Kad riješimo sve probleme onda ćemo nastaviti sa NOMADom:
+   Za pokretanje NOMAD optimizacije potrebno je pokrenuti:
+        C:\Program Files (x86)\nomad.3.8.1\bin\nomad.exe postavke.txt
+
+5)Main.py skripta mora biti slična skripti funkcija.py koju je napisao Ivić
