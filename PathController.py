@@ -1,30 +1,38 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 
-_PROJECT_ROOT = Path.cwd()
-_OPENFOAM_FILES_FOLDER = Path(_PROJECT_ROOT, "OpenFoamFiles")
-_SYSTEM = Path(_PROJECT_ROOT, _OPENFOAM_FILES_FOLDER, "system")
-_0 = Path(_PROJECT_ROOT, _OPENFOAM_FILES_FOLDER, "0")
-_CONSTANT = Path(_PROJECT_ROOT, _OPENFOAM_FILES_FOLDER, "constant")
 
+OPENFOAM_FILES_FOLDER_BASH = Path("mnt", "g", "OpenFoamFiles")
+SOLVER = "wildfireScalarTransportFoam"
+ALLRUN_BASH = Path(OPENFOAM_FILES_FOLDER_BASH, "Allrun")
+BASH_COMMAND = f'bash -c "{ALLRUN_BASH} {OPENFOAM_FILES_FOLDER_BASH} {SOLVER}"'
+
+PROJECT_ROOT = Path.cwd()
+OPENFOAM_FILES_FOLDER = Path(PROJECT_ROOT, "OpenFoamFiles")
+OPENFOAM_ORIGINAL_FILES_FOLDER = Path(PROJECT_ROOT, "OpenFoamOriginalFiles")
+SYSTEM = Path(PROJECT_ROOT, OPENFOAM_FILES_FOLDER, "system")
+ZERO = Path(PROJECT_ROOT, OPENFOAM_FILES_FOLDER, "0")
+CONSTANT = Path(PROJECT_ROOT, OPENFOAM_FILES_FOLDER, "constant")
+
+OPENFOAM_DIRS = {"system": SYSTEM, "0": ZERO, "constant": CONSTANT}
 
 OPENFOAM_CONTROL = {
     "0": {
-        "A": Path(_0, "A"),
-        "Cs": Path(_0, "Cs"),
-        "k": Path(_0, "k"),
+        "A": Path(ZERO, "A"),
+        "Cs": Path(ZERO, "Cs"),
+        "k": Path(ZERO, "k"),
         "kwind": Path(
-            _0,
+            ZERO,
         ),
-        "S": Path(_0, "S"),
-        "T": Path(_0, "T"),
-        "U": Path(_0, "U"),
-        "Z": Path(_0, "Z"),
+        "S": Path(ZERO, "S"),
+        "T": Path(ZERO, "T"),
+        "U": Path(ZERO, "U"),
+        "Z": Path(ZERO, "Z"),
     },
-    "constant": {"transportProperties": Path(_CONSTANT, "transportProperties")},
+    "constant": {"transportProperties": Path(CONSTANT, "transportProperties")},
     "system": {
-        "blockMeshDict": Path(_SYSTEM, "blockMeshDict"),
-        "controlDict": Path(_SYSTEM, "controlDict"),
-        "setFieldsDict": Path(_SYSTEM, "setFieldsDict"),
+        "blockMeshDict": Path(SYSTEM, "blockMeshDict"),
+        "controlDict": Path(SYSTEM, "controlDict"),
+        "setFieldsDict": Path(SYSTEM, "setFieldsDict"),
     },
 }
