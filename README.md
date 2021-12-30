@@ -21,3 +21,4 @@ Ali prilagodite si simulaciju (Ulazne datoteke za OpenFOAM) da vam bude pogodna 
 
 
 Zbog malog broja varijabli i relativno spore evaluacije ja bih preporučio neku MADS metodu. Pogledajte si video lekciju i kako podesiti i pokrenuti optimizaciju pomoću NOAMD-a.
+

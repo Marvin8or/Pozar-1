@@ -1,0 +1,50 @@
+# Naredba koja se poziva za evaluaciju
+BB_EXE			"$C:\Users\Gabriel\anaconda3\python putanja.py"
+
+# Broj opt. varijabli/dimenzija
+DIMENSION 		20
+
+# Tipovi varijabli (R - realna, I - cjelobrojna, C - kategorija, B - binarna)
+#BB_INPUT_TYPE		(R R)
+BB_INPUT_TYPE		* R #sve varijable su istog tipa Real
+
+#Granice/Bounds
+LOWER_BOUND		* -15
+UPPER_BOUND		* 15
+
+# Ciljevi i ograničenja (OBJ - cilj, PB - "blago" ograničenje, EB - "strogo" ograničenje)
+# Cilj se minimizira. Ograničenja se zadaju u formi c(x) <= 0
+BB_OUTPUT_TYPE		OBJ EB
+	
+# Da li će se output čitati iz ispisa (print u Pythonu) (no) ili iz tekstualne datoteke (yes)
+BB_REDIRECTION 		no
+
+# Početna točka
+X0 			* 0
+
+# Maksimalni broj evaluacija
+MAX_BB_EVAL		100
+
+# Tip uzorka i smjerovi pretraživanja
+DIRECTION_TYPE		GPS 2N STATIC
+
+# Početna i minimalna veličina mreže
+INITIAL_MESH_SIZE	1
+MIN_MESH_SIZE		0.01
+
+# Početna i minimalna veličina poll-a
+INITIAL_POLL_SIZE	1
+MIN_POLL_SIZE		0.02
+
+# Detaljnost ispisa	
+DISPLAY_DEGREE		1111
+DISPLAY_ALL_EVAL	yes
+
+# Postavke ispisa
+DISPLAY_STATS		BBE BBO
+
+# Postavke loga u datoteku
+#HISTORY_FILE history.txt
+SOLUTION_FILE solution.txt
+#STATS_FILE statistika_optimizacije.txt BBE SOL, OBJ POLL_SIZE MESH_SIZE
+STATS_FILE nomad_statistics.txt SOL BBO
