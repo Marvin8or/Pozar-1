@@ -2,14 +2,14 @@ from PathController import *
 import subprocess
 from tempfile import mkstemp, TemporaryFile
 from shutil import move, copymode
+import os
 from os import fdopen, remove
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
-import os
 
 
-def writeToFile(file_path, pattern, subst):
+def writeToFile(new_file_path, original_file_path, pattern, subst):
     """
     Function to write new values of coordinates (x, y) to setFieldsDict file or
     new time of duration (T) in controlDict file
@@ -17,18 +17,16 @@ def writeToFile(file_path, pattern, subst):
     # Create temp file
     fh, abs_path = mkstemp()
     with fdopen(fh, "w") as new_file:
-        with open(file_path) as old_file:
+        with open(original_file_path, "r") as old_file:
             for line in old_file:
-                new_file.write(line.replace(pattern, subst))
+                new_file.write(line.replace("box (111 1800 -0.5) (10 1810 0.5);", f"box ({int(X[0])} {int(X[1])} -0.5) ({int(X[0] + 10)} {int(X[1] + 10)} 0.5);"))
 
     # Copy the file permissions from the old file to the new file
-    copymode(file_path, abs_path)
-
-    # Remove original file
-    remove(file_path)
+    copymode(original_file_path, abs_path)
 
     # Move new file
-    move(abs_path, file_path)
+    move(abs_path, new_file_path)
+
 
 
 def createNewDirectory(original_case, new_case, symlinks=False, ignore=None):
@@ -103,13 +101,15 @@ def mainFunction(X, remove_files=True):
     )
 
     writeToFile(
-        OPENFOAM_CONTROL["system"]["setFieldsDict"],
+        new_file_path=OPENFOAM_CONTROL["system"]["setFieldsDict"],
+        old_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["setFieldsDict"],
         pattern="box (111 1800 -0.5) (10 1810 0.5);",
-        subst=f"box ({X[0]} {X[1]} -0.5) ({X[0] + 10} {X[1] + 10} 0.5);",
+        subst=f"box ({X[0]} {X[1]} -0.5) ({int(X[0]) + 10} {int(X[1]) + 10} 0.5);",
     )
 
     writeToFile(
-        OPENFOAM_CONTROL["system"]["controlDict"],
+        new_file_path=OPENFOAM_CONTROL["system"]["controlDict"],
+        old_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["controlDict"],
         pattern="endTime         3600;",
         subst=f"endTime         {X[2]};",
     )
