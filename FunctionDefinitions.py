@@ -19,7 +19,7 @@ def writeToFile(new_file_path, original_file_path, pattern, subst):
     with fdopen(fh, "w") as new_file:
         with open(original_file_path, "r") as old_file:
             for line in old_file:
-                new_file.write(line.replace("box (111 1800 -0.5) (10 1810 0.5);", f"box ({int(X[0])} {int(X[1])} -0.5) ({int(X[0] + 10)} {int(X[1] + 10)} 0.5);"))
+                new_file.write(line.replace(pattern, subst))
 
     # Copy the file permissions from the old file to the new file
     copymode(original_file_path, abs_path)
@@ -62,9 +62,9 @@ def removeFilesInDirectory(directory_path, files_to_keep):
 
 def calculateDifferenceOfBurnedArea(original_case, new_case, plot=False):
 
-    original_data, new_data, difference_data = np.zeros(1000000)
+    original_data, new_data, difference_data = np.zeros(1000000), np.zeros(1000000), np.zeros(1000000)
 
-    with open(original_case, "r") as original_obj, open(new_case, "r") as new_obj:
+    with open(original_case, "r+") as original_obj, open(new_case, "r+") as new_obj:
         for i, (original_line, new_line) in enumerate(
             zip(original_obj, new_obj), start=22
         ):
@@ -102,14 +102,14 @@ def mainFunction(X, remove_files=True):
 
     writeToFile(
         new_file_path=OPENFOAM_CONTROL["system"]["setFieldsDict"],
-        old_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["setFieldsDict"],
-        pattern="box (111 1800 -0.5) (10 1810 0.5);",
+        original_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["setFieldsDict"],
+        pattern= "box (850 1800 -0.5) (860 1810 0.5);",
         subst=f"box ({X[0]} {X[1]} -0.5) ({int(X[0]) + 10} {int(X[1]) + 10} 0.5);",
     )
 
     writeToFile(
         new_file_path=OPENFOAM_CONTROL["system"]["controlDict"],
-        old_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["controlDict"],
+        original_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["controlDict"],
         pattern="endTime         3600;",
         subst=f"endTime         {X[2]};",
     )
