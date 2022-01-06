@@ -1,7 +1,6 @@
-from FunctionDefinitions import mainFunction, writeToFile
-from PathController import *
 import sys
-import numpy as np
+from FunctionDefinitions import mainFunction
+from PathController import *
 
 if __name__ == "__main__":
     _X = sys.argv[1]

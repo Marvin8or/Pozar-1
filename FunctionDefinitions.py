@@ -1,12 +1,12 @@
-from PathController import *
-import subprocess
-from tempfile import mkstemp, TemporaryFile
-from shutil import move, copymode
 import os
-from os import fdopen, remove
+import subprocess
 import numpy as np
 import shutil
 import matplotlib.pyplot as plt
+from PathController import *
+from tempfile import mkstemp, TemporaryFile
+from shutil import move, copymode
+from os import fdopen
 
 
 def writeToFile(new_file_path, original_file_path, pattern, subst):
@@ -19,7 +19,7 @@ def writeToFile(new_file_path, original_file_path, pattern, subst):
     with fdopen(fh, "w") as new_file:
         with open(original_file_path, "r") as old_file:
             for line in old_file:
-                new_file.write(line.replace("box (111 1800 -0.5) (10 1810 0.5);", f"box ({int(X[0])} {int(X[1])} -0.5) ({int(X[0] + 10)} {int(X[1] + 10)} 0.5);"))
+                new_file.write(line.replace(pattern,subst))
 
     # Copy the file permissions from the old file to the new file
     copymode(original_file_path, abs_path)
@@ -56,13 +56,13 @@ def removeFilesInDirectory(directory_path, files_to_keep):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
-        except Exception as e:
-            print(f"Failed to delete {file_path} Reason: {e}")
+        except Exception:
+            print(f"Failed to delete {file_path}")
 
 
 def calculateDifferenceOfBurnedArea(original_case, new_case, plot=False):
 
-    original_data, new_data, difference_data = np.zeros(1000000)
+    original_data, new_data, difference_data = np.zeros(1000000), np.zeros(1000000), np.zeros(1000000)
 
     with open(original_case, "r") as original_obj, open(new_case, "r") as new_obj:
         for i, (original_line, new_line) in enumerate(
@@ -102,27 +102,30 @@ def mainFunction(X, remove_files=True):
 
     writeToFile(
         new_file_path=OPENFOAM_CONTROL["system"]["setFieldsDict"],
-        old_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["setFieldsDict"],
-        pattern="box (111 1800 -0.5) (10 1810 0.5);",
+        original_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["setFieldsDict"],
+        pattern="box (850 1800 -0.5) (860 1810 0.5);",
         subst=f"box ({X[0]} {X[1]} -0.5) ({int(X[0]) + 10} {int(X[1]) + 10} 0.5);",
     )
 
     writeToFile(
         new_file_path=OPENFOAM_CONTROL["system"]["controlDict"],
-        old_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["controlDict"],
-        pattern="endTime         3600;",
+        original_file_path=OPENFOAM_CONTROL_ORIGINAL["system"]["controlDict"],
+        pattern="endTime         100;",
         subst=f"endTime         {X[2]};",
     )
 
-    startSimulation(
-        case_dir_bash=OPENFOAM_FILES_FOLDER_BASH,
-        case_dir_win=OPENFOAM_FILES_FOLDER,
-        command_bash=BASH_COMMAND,
-    )
+    try:
+        startSimulation(
+            case_dir_bash=OPENFOAM_FILES_FOLDER_BASH,
+            case_dir_win=OPENFOAM_FILES_FOLDER,
+            command_bash=BASH_COMMAND,
+        )
 
-    difference_data = calculateDifferenceOfBurnedArea(
-        original_case=OPENFOAM_ORIGINAL_FILES_FOLDER, new_case=OPENFOAM_FILES_FOLDER
-    )
+    finally:
+        difference_data = calculateDifferenceOfBurnedArea(
+            original_case=OPENFOAM_ORIGINAL_FILES_FOLDER, new_case=OPENFOAM_FILES_FOLDER
+        )
+
     if remove_files:
         removeFilesInDirectory(directory_path=OPENFOAM_FILES_FOLDER, files_to_keep=None)
 
